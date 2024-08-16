@@ -6,7 +6,6 @@ module.exports = {
     await queryInterface.createTable("Teachers", {
       userId: {
         type: Sequelize.INTEGER,
-        primaryKey: true,
         references: {
           model: "Users",
           key: "id",
