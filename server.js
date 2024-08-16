@@ -4,6 +4,7 @@ const Home = require("./routes/auth.routes");
 const Users = require("./routes/user.routes");
 const Roles = require("./routes/roles.routes");
 const Groups = require("./routes/groups.routes");
+const Students = require("./routes/student.routes");
 
 class Server {
   constructor() {
@@ -21,6 +22,7 @@ class Server {
     this.app.use(`/users`, Users);
     this.app.use(`/roles`, Roles);
     this.app.use(`/groups`, Groups);
+    this.app.use(`/students`, Students);
   }
   start() {
     this.app.listen(this.port, this.host, () => {

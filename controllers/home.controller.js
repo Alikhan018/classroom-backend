@@ -5,47 +5,60 @@ const secretKey = "key4login";
 
 class Home {
   constructor() {}
+
   static async App(req, res) {
     res.json({ message: "App is running" });
   }
+
   static async loginAuth(req, res) {
     const { email, password } = req.body;
     try {
-      const user = await db.User.findOne({ where: { email: email } });
+      const user = await db.User.findOne({
+        where: { email: email },
+        include: [
+          { model: db.Student, as: "student" },
+          { model: db.Teacher, as: "teacher" },
+        ],
+      });
+
       if (user) {
         if (await bcrypt.compare(password, user.password)) {
           const refinedFromUser = {
-            id: user.dataValues.id,
-            email: user.dataValues.email,
+            id: user.id,
+            email: user.email,
+            student: user.student || null,
+            teacher: user.teacher || null,
           };
           const token = jwt.sign({ refinedFromUser }, secretKey);
           res.json({
-            message: "logged in",
+            message: "Logged in",
             token,
+            user: refinedFromUser,
           });
         } else {
-          res.json({ message: "password is wrong" });
+          res.status(401).json({ message: "Password is wrong" });
         }
       } else {
-        res.json({ message: "user not found!" });
+        res.status(404).json({ message: "User not found!" });
       }
     } catch (err) {
-      console.log(err);
-      res.json({ message: err.message });
+      console.error(err);
+      res.status(500).json({ message: err.message });
     }
   }
+
   // static async matchPassword(req, res) {
   //   const { password } = req.body;
   //   try {
   //     const user = await User.findOne({ where: { email: req.user.id } });
   //     if (user) {
   //       if (user.password === password) {
-  //         res.json({ message: "password matched" });
+  //         res.json({ message: "Password matched" });
   //       }
   //     }
   //   } catch (err) {
-  //     console.log(err);
-  //     res.json({ message: err.message });
+  //     console.error(err);
+  //     res.status(500).json({ message: err.message });
   //   }
   // }
 }
