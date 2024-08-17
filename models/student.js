@@ -1,5 +1,5 @@
 "use strict";
-const { Model, DataTypes, Sequelize } = require("sequelize");
+const { Model, DataTypes } = require("sequelize");
 
 class Student extends Model {
   static associate(models) {
@@ -8,7 +8,7 @@ class Student extends Model {
       as: "users",
     });
     Student.belongsToMany(models.Teacher, {
-      through: models.RoleGroup,
+      through: models.StudentTeacher,
       foreignKey: "studentId",
       otherKey: "teacherId",
       as: "teachers",
@@ -25,7 +25,7 @@ const initStudent = (sequelize) => {
         primaryKey: true,
         references: {
           model: "User",
-          keye: "id",
+          key: "id",
         },
       },
       RollNo: {

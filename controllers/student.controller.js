@@ -9,39 +9,56 @@ class StudentController {
     try {
       const student = await db.Student.findOne({
         where: { RollNo: studentId },
-        include: [
-          {
-            model: db.User,
-            as: "users",
-            include: [
-              {
-                model: db.Feature,
-                as: "features",
-              },
-              {
-                model: db.Role,
-                as: "roles",
-                include: [
-                  {
-                    model: db.Feature,
-                    as: "features",
-                  },
-                ],
-              },
-              {
-                model: db.Group,
-                as: "groups",
-                include: [
-                  {
-                    model: db.Feature,
-                    as: "features",
-                  },
-                ],
-              },
-            ],
-          },
-        ],
+        include: {
+          model: db.Teacher,
+          as: "teachers",
+        },
       });
+      console.log(student.teachers);
+
+      console.log("____________________________________");
+      console.log(studentId);
+      // const student = await db.Student.findOne({
+      //   where: { RollNo: studentId },
+      //   include: [
+      //     {
+      //       model: db.Teacher,
+      //       as: "teachers",
+      //     },
+      //     {
+      //       model: db.User,
+      //       as: "users",
+      //       include: [
+      //         {
+      //           model: db.Feature,
+      //           as: "features",
+      //         },
+      //         {
+      //           model: db.Role,
+      //           as: "roles",
+      //           include: [
+      //             {
+      //               model: db.Feature,
+      //               as: "features",
+      //             },
+      //           ],
+      //         },
+      //         {
+      //           model: db.Group,
+      //           as: "groups",
+      //           include: [
+      //             {
+      //               model: db.Feature,
+      //               as: "features",
+      //             },
+      //           ],
+      //         },
+      //       ],
+      //     },
+      //   ],
+      // });
+
+      console.log("____________________________________");
       res.json({
         status: "success",
         data: student,
@@ -148,6 +165,24 @@ class StudentController {
       { type: db.sequelize.QueryTypes.SELECT }
     );
     res.json({ count: count[0].count });
+  }
+  static async updateGrade(req, res) {
+    const { studentId } = req.params;
+    const { grade } = req.body;
+    try {
+      await db.Student.update(
+        { Grade: grade },
+        { where: { RollNo: studentId } }
+      );
+      res.json({
+        status: "success",
+      });
+    } catch (err) {
+      res.json({
+        status: "err",
+        message: err.message,
+      });
+    }
   }
 }
 

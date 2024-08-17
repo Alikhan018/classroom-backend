@@ -11,6 +11,7 @@ class StudentRoutes {
     this.router.get("/count", Controller.countStudents);
     this.router.post("/create", Controller.createStudent);
     this.router.get("/:studentId", Controller.getStudent);
+    this.router.put("/:studentId/update-grade", Controller.updateGrade);
     this.router.delete("/delete/:studentId", Controller.deleteStudent);
     this.router.put("/update/:studentId", Controller.updateStudent);
   }
