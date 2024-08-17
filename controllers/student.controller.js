@@ -7,61 +7,60 @@ class StudentController {
   static async getStudent(req, res) {
     const studentId = req.params.studentId;
     try {
+      const studentTeachers = await db.StudentTeacher.findAll({
+        where: { studentId },
+      });
+
+      const teachers = await Promise.all(
+        studentTeachers.map(async (studentTeacher) => {
+          return await db.Teacher.findOne({
+            where: { TeacherId: studentTeacher.teacherId },
+          });
+        })
+      );
       const student = await db.Student.findOne({
         where: { RollNo: studentId },
-        include: {
-          model: db.Teacher,
-          as: "teachers",
-        },
+        include: [
+          {
+            model: db.Teacher,
+            as: "teachers",
+          },
+          {
+            model: db.User,
+            as: "users",
+            include: [
+              {
+                model: db.Feature,
+                as: "features",
+              },
+              {
+                model: db.Role,
+                as: "roles",
+                include: [
+                  {
+                    model: db.Feature,
+                    as: "features",
+                  },
+                ],
+              },
+              {
+                model: db.Group,
+                as: "groups",
+                include: [
+                  {
+                    model: db.Feature,
+                    as: "features",
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       });
-      console.log(student.teachers);
 
-      console.log("____________________________________");
-      console.log(studentId);
-      // const student = await db.Student.findOne({
-      //   where: { RollNo: studentId },
-      //   include: [
-      //     {
-      //       model: db.Teacher,
-      //       as: "teachers",
-      //     },
-      //     {
-      //       model: db.User,
-      //       as: "users",
-      //       include: [
-      //         {
-      //           model: db.Feature,
-      //           as: "features",
-      //         },
-      //         {
-      //           model: db.Role,
-      //           as: "roles",
-      //           include: [
-      //             {
-      //               model: db.Feature,
-      //               as: "features",
-      //             },
-      //           ],
-      //         },
-      //         {
-      //           model: db.Group,
-      //           as: "groups",
-      //           include: [
-      //             {
-      //               model: db.Feature,
-      //               as: "features",
-      //             },
-      //           ],
-      //         },
-      //       ],
-      //     },
-      //   ],
-      // });
-
-      console.log("____________________________________");
       res.json({
         status: "success",
-        data: student,
+        data: { ...student.toJSON(), teachers },
       });
     } catch (err) {
       res.json({

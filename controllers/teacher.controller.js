@@ -6,6 +6,17 @@ class TeacherController {
   static async getTeacher(req, res) {
     const { teacherId } = req.params;
     try {
+      const studentTeachers = await db.StudentTeacher.findAll({
+        where: { teacherId },
+      });
+
+      const students = await Promise.all(
+        studentTeachers.map(async (studentTeacher) => {
+          return await db.Student.findOne({
+            where: { RollNo: studentTeacher.studentId },
+          });
+        })
+      );
       const teacher = await db.Teacher.findOne({
         where: { TeacherId: teacherId },
         include: [
@@ -47,7 +58,7 @@ class TeacherController {
       });
       res.json({
         status: "success",
-        data: teacher,
+        data: { ...teacher.toJSON(), students },
       });
     } catch (err) {
       res.json({
