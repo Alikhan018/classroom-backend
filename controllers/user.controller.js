@@ -1,3 +1,4 @@
+const { where } = require("sequelize");
 const db = require("../models");
 const bcrypt = require("bcrypt");
 
@@ -155,7 +156,7 @@ class UserController {
     const id = req.params.userId;
     const { newPassword } = req.body;
     try {
-      const hash = bcrypt.hashSync(password, 10);
+      const hash = bcrypt.hashSync(newPassword, 10);
       await db.User.update({ password: hash }, { where: { id: id } });
       res.json({ status: "success", message: "password changed!" });
     } catch (err) {
@@ -197,7 +198,6 @@ class UserController {
       });
     }
   }
-
   static async countUser(req, res) {
     const count = await db.User.count();
     res.json({ count });

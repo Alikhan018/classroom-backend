@@ -46,21 +46,6 @@ class Home {
       res.status(500).json({ message: err.message });
     }
   }
-
-  // static async matchPassword(req, res) {
-  //   const { password } = req.body;
-  //   try {
-  //     const user = await User.findOne({ where: { email: req.user.id } });
-  //     if (user) {
-  //       if (user.password === password) {
-  //         res.json({ message: "Password matched" });
-  //       }
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     res.status(500).json({ message: err.message });
-  //   }
-  // }
 }
 
 module.exports = Home;
