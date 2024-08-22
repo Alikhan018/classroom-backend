@@ -26,7 +26,7 @@ class RolesController {
           { model: db.Group, as: "groups" },
           {
             model: db.Feature,
-            as: "feature",
+            as: "features",
             through: {
               model: db.FeaturePerms,
               where: {
@@ -124,38 +124,38 @@ class RolesController {
     }
   }
   static async updateRole(req, res) {
-    const roleId = req.params.roleId;
-    const { name, users, groups, features } = req.body;
+    const { id, name, users, groups, features } = req.body;
     try {
+      console.log(features);
       await db.Role.update(
         { name },
         {
           where: {
-            id: roleId,
+            id: id,
           },
         }
       );
       if (users) {
-        await db.UserRole.destroy({ where: { roleId } });
+        await db.UserRole.destroy({ where: { roleId: id } });
         await Promise.all(
           users.map(
             async (user) =>
               await db.UserRole.create({
                 userId: user.id,
-                roleId,
+                roleId: id,
               })
           )
         );
       } else {
       }
       if (groups) {
-        await db.RoleGroup.destroy({ where: { roleId } });
+        await db.RoleGroup.destroy({ where: { roleId: id } });
         await Promise.all(
           groups.map(
             async (group) =>
               await db.RoleGroup.create({
                 groupId: group.id,
-                roleId,
+                roleId: id,
               })
           )
         );
@@ -165,14 +165,14 @@ class RolesController {
         await db.FeaturePerms.destroy({
           where: {
             entityId: id,
-            entityName: "Groups",
+            entityName: "Roles",
           },
         });
         await features.map(async (feature) => {
           await db.FeaturePerms.create({
             entityId: id,
             featureId: feature.id,
-            entityName: "Groups",
+            entityName: "Roles",
           });
         });
       }
@@ -226,10 +226,7 @@ class RolesController {
     }
   }
   static async countRoles(req, res) {
-    const count = await db.sequelize.query(
-      'SELECT CAST(COUNT(*) AS INTEGER) FROM "Roles"',
-      { type: db.sequelize.QueryTypes.SELECT }
-    );
+    const count = await db.Role.count();
     res.json({ count });
   }
 }

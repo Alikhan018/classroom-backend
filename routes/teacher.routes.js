@@ -8,7 +8,9 @@ class TeacherRoutes {
   }
   routes() {
     this.router.get(`/`, Controller.getAllTeachers);
+    this.router.get(`/admin`, Controller.getAllTeachersAdmin);
     this.router.get(`/count`, Controller.countTeachers);
+    this.router.get(`/count/admin`, Controller.countTeachersAdmin);
     this.router.post(`/create`, Controller.createTeacher);
     this.router.get(`/:teacherId`, Controller.getTeacher);
     this.router.put(`/update/:teacherId`, Controller.updateTeacher);

@@ -130,8 +130,7 @@ class GroupController {
   }
 
   static async updateGroup(req, res) {
-    const id = req.params.groupId;
-    const { name, users, roles, features } = req.body;
+    const { id, name, users, roles, features } = req.body;
     try {
       await db.Group.update(
         { name },
@@ -168,13 +167,25 @@ class GroupController {
       } else {
       }
       if (features) {
+        const featuresComplete = await Promise.all(
+          features.map(async (feature) => {
+            await db.Feature.findOne({
+              where: {
+                [db.Sequelize.and]: [
+                  { name: feature.name },
+                  { entityType: feature.entityType },
+                ],
+              },
+            });
+          })
+        );
         await db.FeaturePerms.destroy({
           where: {
             entityId: id,
             entityName: "Groups",
           },
         });
-        await features.map(async (feature) => {
+        featuresComplete.map(async (feature) => {
           await db.FeaturePerms.create({
             entityId: id,
             featureId: feature.id,
@@ -227,10 +238,7 @@ class GroupController {
     }
   }
   static async countGroups(req, res) {
-    const count = await db.sequelize.query(
-      'SELECT CAST(COUNT(*) AS INTEGER) FROM "Groups"',
-      { type: db.sequelize.QueryTypes.SELECT }
-    );
+    const count = await db.Group.count();
     res.json({ count });
   }
 }

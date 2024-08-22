@@ -6,6 +6,7 @@ const Roles = require("./routes/roles.routes");
 const Groups = require("./routes/groups.routes");
 const Students = require("./routes/student.routes");
 const Teachers = require("./routes/teacher.routes");
+const Features = require("./routes/features.routes");
 
 class Server {
   constructor() {
@@ -25,6 +26,7 @@ class Server {
     this.app.use(`/groups`, Groups);
     this.app.use(`/students`, Students);
     this.app.use(`/teachers`, Teachers);
+    this.app.use(`/features`, Features);
   }
   start() {
     this.app.listen(this.port, this.host, () => {

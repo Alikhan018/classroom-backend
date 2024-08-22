@@ -8,7 +8,9 @@ class StudentRoutes {
   }
   routes() {
     this.router.get("/", Controller.getAllStudents);
+    this.router.get("/admin", Controller.getAllStudentsAdmin);
     this.router.get("/count", Controller.countStudents);
+    this.router.get("/count/admin", Controller.countStudentsAdmin);
     this.router.post("/create", Controller.createStudent);
     this.router.get("/:studentId", Controller.getStudent);
     this.router.put("/:studentId/update-grade", Controller.updateGrade);

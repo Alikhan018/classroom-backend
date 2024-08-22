@@ -199,10 +199,7 @@ class UserController {
   }
 
   static async countUser(req, res) {
-    const count = await db.sequelize.query(
-      'SELECT CAST(COUNT(*) AS INTEGER) FROM "Users"',
-      { type: db.sequelize.QueryTypes.SELECT }
-    );
+    const count = await db.User.count();
     res.json({ count });
   }
 }

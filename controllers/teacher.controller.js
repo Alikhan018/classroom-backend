@@ -69,8 +69,26 @@ class TeacherController {
   }
   static async getAllTeachers(req, res) {
     try {
-      const teachers = await db.Teacher.findAll();
+      const id = req.query.studentId;
+      const studentteachers = await db.StudentTeacher.findAll({
+        where: { studentId: id },
+      });
+      const teachers = await Promise.all(
+        studentteachers.map(async (st) => {
+          return await db.Teacher.findOne({
+            where: { TeacherId: st.teacherId },
+          });
+        })
+      );
       res.json({ status: "success", data: teachers });
+    } catch (err) {
+      res.json({ status: "error", message: err.message });
+    }
+  }
+  static async getAllTeachersAdmin(req, res) {
+    try {
+      const response = await db.Teacher.findAll();
+      res.json({ status: "success", data: response });
     } catch (err) {
       res.json({ status: "error", message: err.message });
     }
@@ -155,11 +173,13 @@ class TeacherController {
     }
   }
   static async countTeachers(req, res) {
-    const count = await db.sequelize.query(
-      'SELECT CAST(COUNT(*) AS INTEGER) FROM "Teachers"',
-      { type: db.sequelize.QueryTypes.SELECT }
-    );
-    res.json({ count: count[0].count });
+    const id = req.query.id;
+    const count = await db.StudentTeacher.count({ where: { studentId: id } });
+    res.json({ count });
+  }
+  static async countTeachersAdmin(req, res) {
+    const count = await db.Teacher.count();
+    res.json({ count });
   }
 }
 

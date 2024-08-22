@@ -71,6 +71,24 @@ class StudentController {
   }
   static async getAllStudents(req, res) {
     try {
+      const id = req.query.teacherId;
+      const studentteachers = await db.StudentTeacher.findAll({
+        where: { teacherId: id },
+      });
+      const students = await Promise.all(
+        studentteachers.map(async (tch) => {
+          return await db.Student.findOne({
+            where: { TeacherId: tch.teacherId },
+          });
+        })
+      );
+      res.json({ status: "success", data: students });
+    } catch (err) {
+      res.json({ status: "error", message: err.message });
+    }
+  }
+  static async getAllStudentsAdmin(req, res) {
+    try {
       const students = await db.Student.findAll();
       res.json({
         status: "success",
@@ -159,11 +177,13 @@ class StudentController {
     }
   }
   static async countStudents(req, res) {
-    const count = await db.sequelize.query(
-      'SELECT CAST(COUNT(*) AS INTEGER) FROM "Students"',
-      { type: db.sequelize.QueryTypes.SELECT }
-    );
-    res.json({ count: count[0].count });
+    const id = req.query.id;
+    const count = await db.StudentTeacher.count({ where: { teacherId: id } });
+    res.json({ count });
+  }
+  static async countStudentsAdmin(req, res) {
+    const count = await db.Student.count();
+    res.json({ count });
   }
   static async updateGrade(req, res) {
     const { studentId } = req.params;
