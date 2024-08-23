@@ -166,6 +166,7 @@ class GroupController {
         );
       } else {
       }
+      console.log(features);
       if (features) {
         const featuresComplete = await Promise.all(
           features.map(async (feature) => {

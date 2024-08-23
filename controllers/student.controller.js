@@ -72,13 +72,14 @@ class StudentController {
   static async getAllStudents(req, res) {
     try {
       const id = req.query.teacherId;
+      console.log("heyy", id);
       const studentteachers = await db.StudentTeacher.findAll({
         where: { teacherId: id },
       });
       const students = await Promise.all(
         studentteachers.map(async (tch) => {
           return await db.Student.findOne({
-            where: { TeacherId: tch.teacherId },
+            where: { RollNo: tch.studentId },
           });
         })
       );
@@ -183,8 +184,8 @@ class StudentController {
   }
   static async countStudentsAdmin(req, res) {
     const count = await db.Student.count();
-    // res.json({ count });
-    res.json({ count: 5 });
+    res.json({ count });
+    // res.json({ count: 5 });
   }
   static async updateGrade(req, res) {
     const { studentId } = req.params;
