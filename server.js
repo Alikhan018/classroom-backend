@@ -15,7 +15,8 @@ class Server {
     this.host = "localhost";
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
-    this.app.use(cors());
+    // this.app.use(cors());
+    this.app.use(cors({ origin: true, credentials: true }));
     this.start();
     this.routes();
   }

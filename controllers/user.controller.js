@@ -20,8 +20,11 @@ class UserController {
     }
   }
   static async getUser(req, res) {
+    console.log("hello world");
     const userId = req.params.userId;
+    console.log(req.params.userId);
     try {
+      console.log(userId);
       const user = await db.User.findOne({
         where: { id: parseInt(userId) },
         include: [

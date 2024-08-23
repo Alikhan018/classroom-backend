@@ -20,7 +20,7 @@ class Home {
           { model: db.Teacher, as: "teacher" },
         ],
       });
-
+      console.log(user);
       if (user) {
         if (await bcrypt.compare(password, user.password)) {
           const refinedFromUser = {
@@ -29,6 +29,7 @@ class Home {
             student: user.student || null,
             teacher: user.teacher || null,
           };
+          console.log(refinedFromUser);
           const token = jwt.sign({ refinedFromUser }, secretKey);
           res.json({
             message: "Logged in",

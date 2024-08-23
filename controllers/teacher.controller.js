@@ -173,13 +173,17 @@ class TeacherController {
     }
   }
   static async countTeachers(req, res) {
-    const id = req.query.id;
-    const count = await db.StudentTeacher.count({ where: { studentId: id } });
+    const studentId = req.query.id;
+    const count = await db.StudentTeacher.count({ where: { studentId } });
     res.json({ count });
   }
   static async countTeachersAdmin(req, res) {
-    const count = await db.Teacher.count();
-    res.json({ count });
+    try {
+      const count = await db.Teacher.count();
+      res.json({ count });
+    } catch (err) {
+      res.json({ err });
+    }
   }
 }
 
